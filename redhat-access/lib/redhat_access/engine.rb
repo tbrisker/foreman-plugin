@@ -44,20 +44,12 @@ module RedhatAccess
     end
 
     initializer :config_csp_headers do |app|
-      ::SecureHeaders::Configuration.configure do |config|
+      ::SecureHeaders::Configuration.override(:redhat_access) do |config|
         if config && config.csp
-          if config.csp[:frame_src]
-            config.csp[:frame_src] = config.csp[:frame_src] << ' *.redhat.com  *.force.com'
-          end
-          if config.csp[:connect_src]
-            config.csp[:connect_src] = config.csp[:connect_src] << ' *.redhat.com'
-          end
-          if config.csp[:script_src]
-            config.csp[:script_src] = config.csp[:script_src] << ' *.redhat.com'
-          end
-          if config.csp[:img_src]
-            config.csp[:img_src] = config.csp[:img_src] << ' *.redhat.com'
-          end
+          config.csp[:child_src] += ['*.redhat.com', '*.force.com']
+          config.csp[:connect_src] << '*.redhat.com'
+          config.csp[:script_src] << '*.redhat.com'
+          config.csp[:img_src] << '*.redhat.com'
         end
       end
     end
